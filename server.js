@@ -3,6 +3,9 @@ const express = require("express");
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
 const sqlite = require("sqlite");
+const Game = require("./modules/Game.js");
+
+const axios = require("axios");
 
 let app = express();
 require("express-ws")(app);
@@ -10,6 +13,8 @@ require("express-ws")(app);
 //const db = new sqlite3.Database(":memory:");
 
 const PORT = process.env.PORT || 8080;
+
+let games = {};
 
 async function getDBConnection() {
   return await sqlite.open({
@@ -41,9 +46,8 @@ app.ws("/game", async function (ws, req) {
   }
 
   let db = await getDBConnection();
-  let row = { code: generateCode(6) };
   row = await db.get(
-    'SELECT * FROM game_sessions WHERE gamecode="' + row.code + '"'
+    'SELECT * FROM game_sessions WHERE uuid="' + req.query.uuid + '"'
   );
   await db.close();
 
@@ -68,6 +72,8 @@ app.ws("/game", async function (ws, req) {
       message: "Game " + row.id + " is connected!",
     })
   );
+
+  games[row.uuid].addWebsocket(ws);
 });
 
 function generateCode(length) {
@@ -97,6 +103,15 @@ app.get("/api/game/new", async function (req, res) {
     'SELECT * FROM game_sessions WHERE uuid="' + row.uuid + '"'
   );
   await db.close();
+  games[row.uuid] = new Game();
+  games[row.uuid].fetchQuestions
+  res.status(200);
+  res.send({ status: "ok", game: row });
+});
+
+app.get("/api/game/start", async function (req, res) {
+  games[req.query.uuid].startGame(req.query.num);
+  games[req.query.uuid].promptQuestion(0);
   res.status(200);
   res.send({ status: "ok", game: row });
 });
