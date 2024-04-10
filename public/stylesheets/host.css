@@ -1,0 +1,15 @@
+main {
+    height: 90vh;
+}
+
+header, footer {
+    height: 5vh;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    font-weight: bold;
+}
+
+header p, footer p {
+    color: black;
+}

@@ -1,0 +1,17 @@
+{
+  "name": "csis390final",
+  "version": "1.0.0",
+  "description": "A trivia-murder-party-based game",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js",
+    "start": "node server.js"
+  },
+  "author": "Jayden Wojcik & Ceana Potter",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-ws": "^5.0.2",
+    "sqlite3": "^5.1.7"
+  }
+}
