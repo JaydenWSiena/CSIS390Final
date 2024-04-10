@@ -2,41 +2,51 @@ const { randomUUID } = require("crypto");
 const express = require("express");
 const fs = require("fs");
 const sqlite3 = require("sqlite3").verbose();
+const sqlite = require("sqlite");
 
 let app = express();
 require("express-ws")(app);
 
-const db = new sqlite3.Database(":memory:");
+//const db = new sqlite3.Database(":memory:");
 
 const PORT = process.env.PORT || 8080;
 
-db.serialize(() => {
+async function getDBConnection() {
+  return await sqlite.open({
+    filename: "db.sqlite",
+    driver: sqlite3.Database,
+  });
+}
+
+(async function () {
+  let db = await getDBConnection();
   console.log("SQLITE | Serializing Database...");
 
-  db.run("DROP TABLE IF EXISTS game_sessions");
-  db.run(
+  await db.run("DROP TABLE IF EXISTS game_sessions");
+  await db.run(
     "CREATE TABLE IF NOT EXISTS game_sessions (id INTEGER PRIMARY KEY, gamecode TEXT UNIQUE, uuid TEXT UNIQUE)"
   );
-  db.run("DELETE FROM game_sessions");
-});
+  await db.run("DELETE FROM game_sessions");
+
+  await db.close();
+})();
 
 app.ws("/game", async function (ws, req) {
   if (!req.query.uuid) {
-    ws.send(JSON.stringify({ status: "error", error: "No game id specified." }));
+    ws.send(
+      JSON.stringify({ status: "error", error: "No game id specified." })
+    );
     ws.close();
     return;
   }
 
+  let db = await getDBConnection();
   let row = { code: generateCode(6) };
-  row = await new Promise((resolve) => {
-    db.get(
-      'SELECT * FROM game_sessions WHERE gamecode="' + row.code + '"',
-      function (err, selectedRow) {
-        resolve(selectedRow);
-      }
-    );
-  });
-  
+  row = await db.get(
+    'SELECT * FROM game_sessions WHERE gamecode="' + row.code + '"'
+  );
+  await db.close();
+
   if (!row) {
     ws.send(JSON.stringify({ status: "error", error: "Game does not exist." }));
     ws.close();
@@ -45,13 +55,19 @@ app.ws("/game", async function (ws, req) {
 
   console.log(row);
 
-  ws.on('error', console.error);
+  ws.on("error", console.error);
 
-  ws.on('message', function message(data) {
-    console.log('received: %s', data);
+  ws.on("message", function message(data) {
+    console.log("received: %s", data);
   });
 
-  ws.send(JSON.stringify({status:'msg',game: row, message:"Game "+row.id+" is connected!"}));
+  ws.send(
+    JSON.stringify({
+      status: "msg",
+      game: row,
+      message: "Game " + row.id + " is connected!",
+    })
+  );
 });
 
 function generateCode(length) {
@@ -68,17 +84,19 @@ function generateCode(length) {
 }
 
 app.get("/api/game/new", async function (req, res) {
+  let db = await getDBConnection();
   let row = { code: generateCode(6), uuid: randomUUID() };
-  row = await new Promise((resolve) => {
-    db.run("INSERT INTO game_sessions (gamecode, uuid) VALUES (\""+row.code+"\", \""+row.uuid+"\")", function() {
-        db.get(
-            'SELECT * FROM game_sessions WHERE uuid="' + row.uuid + '"',
-            function (err, selectedRow) {
-              resolve(selectedRow);
-            }
-          );
-    });
-  });
+  await db.exec(
+    'INSERT INTO game_sessions (gamecode, uuid) VALUES ("' +
+      row.code +
+      '", "' +
+      row.uuid +
+      '")'
+  );
+  row = await db.get(
+    'SELECT * FROM game_sessions WHERE uuid="' + row.uuid + '"'
+  );
+  await db.close();
   res.status(200);
   res.send({ status: "ok", game: row });
 });
@@ -86,25 +104,18 @@ app.get("/api/game/new", async function (req, res) {
 app.get("/api/game/get", async function (req, res) {
   if (!req.query.code) {
     res.status(400);
-    res.send({status:'error',error:"No code specified."})
-    return
+    res.send({ status: "error", error: "No code specified." });
+    return;
   }
   let row = { code: req.query.code };
-  row = await new Promise((resolve) => {
-    db.get(
-      'SELECT * FROM game_sessions WHERE gamecode="' + row.code + '"',
-      function (err, selectedRow) {
-        if (selectedRow)
-            resolve(selectedRow);
-        else
-            resolve(null);
-      }
-    );
-  });
+  let db = await getDBConnection();
+  row = await db.get(
+      'SELECT * FROM game_sessions WHERE gamecode="' + row.code + '"');
+  await db.close();
   if (!row) {
     res.status(404);
-    res.send({status:'error',error:"Could not find game with that code."})
-    return
+    res.send({ status: "error", error: "Could not find game with that code." });
+    return;
   }
   res.status(200);
   res.send({ status: "ok", game: row });
