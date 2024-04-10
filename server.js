@@ -109,11 +109,27 @@ app.get("/api/game/new", async function (req, res) {
   res.send({ status: "ok", game: row });
 });
 
-app.get("/api/game/start", async function (req, res) {
-  games[req.query.uuid].startGame(req.query.num);
-  games[req.query.uuid].promptQuestion(0);
+app.get("/api/game/fetchQuestions", async function (req, res) {
+  if (!req.query.uuid) {
+    res.status(400);
+    res.send({ status: "error", error: "No UUID specified." });
+    return;
+  }
+  let game = games[req.query.uuid];
+  if (!game) {
+    res.status(400);
+    res.send({ status: "error", error: "Game does not exist." });
+    return;
+  }
+  let questions = await game.fetchQuestions({
+    questionCount: {
+      easy: 2,
+      medium: 5,
+      hard: 3,
+    },
+  });
   res.status(200);
-  res.send({ status: "ok", game: row });
+  res.send({ status: "ok", questions });
 });
 
 app.get("/api/game/get", async function (req, res) {
