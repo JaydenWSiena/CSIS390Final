@@ -1,0 +1,38 @@
+@startuml
+!theme toy
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+
+participant "Host" as Host 
+participant "Connection Manager\n[CM]" as CM 
+participant "Questions Manager\n[QM]" as QM
+
+Host -> CM : emit(Tcreate, ABC)
+activate CM
+CM -> CM : join(ABC)
+CM -> QM : createQuestionBank(ABC)
+
+activate QM
+QM -> QM : fetchQuestions(easy)
+QM -> QM : storeQuestions(ABC, [q,a])
+QM -> CM : Success(ABC)
+deactivate QM
+CM -> Host : Success(ABC, numOfQuestions: 10)
+
+alt#Gold #LightBlue ScoreUpdate 
+    CM -> CM : on(TscoreUpdate, ABC)
+    CM -> Host : to(ABC).emit(TscoreUpdate, TScoreBoard)
+end
+deactivate CM
+
+alt#LightBlue #LightGreen "For new question:"
+' This is logic on how New Question is asked. 
+' Note how Host requests New Question, and the CM just emits this to the room
+    Host -> CM : emit(TshowNextQuestion, ABC)
+    CM -> QM : getNxtQuestion(ABC)
+    QM -> CM : TQuestionAnswer
+    CM -> Host : to(ABC).emit(TnewQuestion,TQuestionAnswer) 
+end
+
+@enduml
