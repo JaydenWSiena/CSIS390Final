@@ -1,0 +1,32 @@
+@startuml
+!theme toy
+title Player Sequence Diagram
+
+skinparam ParticipantPadding 20
+skinparam BoxPadding 10
+
+participant "Player" as Player 
+participant "Connection Manager\n[CM]" as CM 
+participant "Score Manager\n[SM]" as SM
+
+Player -> CM : join(ABC)
+CM -> CM : join("ABC") [join room ABC]
+
+alt#Gold #LightGreen UpdateScore
+  SM -> Player : to(ABC).emit(TscoreUpdate, TscoreBoard)
+end
+
+alt#Gold #LightBlue NewQuestion
+  CM -> Player : to(ABC).emit(TnewQuestion, TquestionAnswer)
+  Player -> Player : Display TquestionAnswer
+  Player -> CM : emit(TnewAnswer, TquestionAnswer)
+  CM -> CM : Check Answer
+  CM -> SM : IncrementScore(ABC, player.id)
+alt#Gold #LightGreen UpdateScore
+  SM -> Player : to(ABC).emit(TscoreUpdate, TscoreBoard)
+end
+end
+
+
+
+@enduml
