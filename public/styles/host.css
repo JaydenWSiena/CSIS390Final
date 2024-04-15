@@ -69,8 +69,8 @@ main * {
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;
-	background-color: #888888;
-	color: #888888;
+	background-color: #000000;
+	color: #000000;
 	animation: dot-flashing 1s infinite linear alternate;
 	animation-delay: 0.5s;
 }
@@ -86,8 +86,8 @@ main * {
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;
-	background-color: #888888;
-	color: #888888;
+	background-color: #000000;
+	color: #000000;
 	animation: dot-flashing 1s infinite alternate;
 	animation-delay: 0s;
 }
@@ -96,8 +96,8 @@ main * {
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;
-	background-color: #888888;
-	color: #888888;
+	background-color: #000000;
+	color: #000000;
 	animation: dot-flashing 1s infinite alternate;
 	animation-delay: 1s;
 }
@@ -120,8 +120,8 @@ main * {
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;
-	background-color: #888888;
-	color: #888888;
+	background-color: #000000;
+	color: #000000;
 	transform-origin: 5px 15px;
 	animation: dot-windmill 2s infinite linear;
 }
@@ -137,8 +137,8 @@ main * {
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;
-	background-color: #888888;
-	color: #888888;
+	background-color: #000000;
+	color: #000000;
 }
 .dot-windmill::after {
 	left: 8.66254px;
@@ -146,8 +146,8 @@ main * {
 	width: 10px;
 	height: 10px;
 	border-radius: 5px;
-	background-color: #888888;
-	color: #888888;
+	background-color: #000000;
+	color: #000000;
 }
 
 @keyframes dot-windmill {

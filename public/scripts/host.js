@@ -90,6 +90,16 @@ async function showLeaderboard(playerList) {
 	sectionInView = document.getElementById("leaderboard-section");
 	sectionInView.scrollIntoView();
 	await delay(1);
+	$(leaderboardElement.parentElement).animate(
+		{
+			scrollTop: $(
+				leaderboardElement.children[0]
+			).offset().top,
+		},
+		500
+	);
+
+	await delay(1);
 
 	$(leaderboardElement.parentElement).animate(
 		{
@@ -224,4 +234,4 @@ showLeaderboard([
 
 // changeBackgroundColor("rgba(202, 85, 31, 0.9)")
 
-setGameCodeTextBoxes("TESTING")
+// setGameCodeTextBoxes("TESTING")
