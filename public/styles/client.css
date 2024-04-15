@@ -1,0 +1,112 @@
+
+header {
+	height: 10vh;
+	background-color: rgb(255, 255, 255);
+	color: black;
+
+	padding: 8px 8px;
+	font-size: 24px;
+
+	border: none;
+	border-top: 2px solid #bbbbbb44;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.name {
+	margin: 2px 2px;
+
+	padding: 12px 12px;
+
+	box-shadow: 0 0 10px black;
+
+	background-color: white;
+	color: black;
+
+	font-weight: normal;
+	font-family: "PlayerOne", Manrope, Manrope-Fallback, Arial, sans-serif;
+}
+
+main {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	overflow: hidden;
+	scroll-behavior: smooth;
+
+	color: white;
+	text-shadow: 0 0 20px #ffffff70;
+}
+
+main section {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: row;
+	flex-shrink: 0;
+
+	margin: 0 0;
+
+	width: 100vw;
+	height: 90vh;
+}
+
+main * {
+	margin: 24px 36px;
+}
+
+#question-section {
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+main .question h2 {
+	width: auto;
+	box-shadow: 0 0 20px #bbbbbb44;
+	border: 2px solid #bbbbbb44;
+	backdrop-filter: blur(3px) brightness(110%) contrast(80%);
+
+	text-shadow: 0 0 20px #72727270;
+	text-align: end;
+
+	border-radius: 4px;
+	padding: 8px 8px;
+}
+
+main .question h1 {
+	font-size: 64px;
+	text-align: end;
+	text-wrap: pretty;
+}
+
+.answer-button {
+    font-size: 36px;
+    font-weight: 600;
+
+    width: 25vw;
+    height: 10vh;
+
+    color: white;
+    background: none;
+    border: 2px solid #bbbbbb44;
+	box-shadow: 0 0 20px #ffffff44;
+	padding: 8px 16px;
+
+	border-radius: 4px;
+	backdrop-filter: blur(3px) brightness(100%) contrast(80%);
+	transition-duration: 0.5s;
+}
+
+.answer-button:hover {
+	backdrop-filter: blur(5px) brightness(120%) contrast(60%);
+}
+
+@media (max-width: 680px) {
+    .answer-button {
+        width: 90vw;
+    }
+}

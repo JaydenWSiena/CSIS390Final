@@ -1,15 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trivia Game</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="stylesheets/client.css" />
-    <script src="scripts/client.js" defer></script>
-  </head>
-  <body>
-    <header><p>Game</p></header>
-    <main></main>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="styles/client.css" />
+		<title>Game - Countdown Trivia</title>
+		<script src="scripts/client.js" defer></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+        <script src="https://kit.fontawesome.com/bf79344efa.js" crossorigin="anonymous"></script>
+	</head>
+	<body>
+		<div class="background-color"></div>
+		<header>
+			<div><span class="name">TESTING</span></div>
+		</header>
+		<main>
+            <section id="question-section"> 
+                <h1>This is a question?</h1>
+                <button class="answer-button">First Answer</button>
+                <button class="answer-button">Second Answer</button>
+                <button class="answer-button">Third Answer</button>
+                <button class="answer-button">Fourth Answer</button>
+            </section>
+            <section id="leaderboard-section"> 
+                <div class="leaderboard">
+                    <ol>
+                        <li><div><h2>First Player</h2><h2>100</h2></div></li>
+                        <li><div><h2>Second Player</h2><h2>100</h2></div></li>
+                        <li><div><h2>Third Player</h2><h2>100</h2></div></li>
+                        <li><div><h2>Fourth Player</h2><h2>100</h2></div></li>
+                        <li><div><h2>Fifth Player</h2><h2>100</h2></div></li>
+                    </ol>
+                </div>
+            </section>
+            <section id="prize-section"> 
+
+            </section>
+		</main>
+	</body>
 </html>

@@ -1,18 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="stylesheets/host.css" />
-    <title>Document</title>
-    <script src="scripts/host.js" defer></script>
-</head>
-<body>
-    <header></header>
-    <main></main>
-    <footer>
-        <p>Game Code: ??????</p>
-    </footer>
-</body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<link rel="stylesheet" href="style.css" />
+		<link rel="stylesheet" href="styles/host.css" />
+		<title>0 Players - Countdown Trivia</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+		<script
+			src="https://kit.fontawesome.com/bf79344efa.js"
+			crossorigin="anonymous"
+		></script>
+		<script src="scripts/host.js" defer></script>
+	</head>
+	<body>
+		<div class="background-color"></div>
+
+		<main>
+			<section id="waiting-section">
+				<div>
+					<div class="welcome-title">
+						<h3>Welcome!</h3>
+						<h2>Please join with the following code:</h2>
+					</div>
+					<span class="code"
+						><div class="snippet" data-title="dot-flashing">
+                            <div class="stage">
+                              <div class="dot-flashing"></div>
+                            </div>
+                          </div></span
+					>
+				</div>
+				<div class="player-list"></div>
+			</section>
+			<section id="question-section">
+				<div class="question">
+					<h2>CATEGORY</h2>
+					<h1>This is a question?</h1>
+				</div>
+				<div class="answer-list">
+					<ol>
+						<li>First Answer</li>
+						<li>Second Answer</li>
+						<li>Third Answer</li>
+						<li>Fourth Answer</li>
+					</ol>
+				</div>
+			</section>
+			<section id="leaderboard-section">
+				<div class="leaderboard">
+					<ol>
+						<li>
+							<div>
+								<h2>First Player</h2>
+								<h2>100</h2>
+							</div>
+						</li>
+						<li>
+							<div>
+								<h2>Second Player</h2>
+								<h2>100</h2>
+							</div>
+						</li>
+						<li>
+							<div>
+								<h2>Third Player</h2>
+								<h2>100</h2>
+							</div>
+						</li>
+						<li>
+							<div>
+								<h2>Fourth Player</h2>
+								<h2>100</h2>
+							</div>
+						</li>
+						<li>
+							<div>
+								<h2>Fifth Player</h2>
+								<h2>100</h2>
+							</div>
+						</li>
+					</ol>
+				</div>
+			</section>
+			<section id="prize-section">
+				<div class="prizes"></div>
+			</section>
+		</main>
+		<footer>
+			<div class="code-contains">
+				<h3>
+					GAME CODE:
+					
+				</h3>
+                <div class="code">
+                    <div class="dot-windmill"></div>
+        </div
+            >
+			</div>
+			<div class="fs-mode" id="fs">
+				<i class="fa-solid fa-maximize"></i>
+			</div>
+		</footer>
+		
+	</body>
 </html>

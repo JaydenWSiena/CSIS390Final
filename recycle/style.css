@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
+* {
+  margin: auto;
+  box-sizing: border-box;
+  font-family: montserrat;
+  color: white;
+}
+
+body {
+  background-image: url("assets/Vert_Align_Beach.png");
+  background-size: cover;
+}
+
+@media screen and (min-width: 750px) {
+}
+
+main {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+section {
+  padding: 24px 24px;
+  border-radius: 24px;
+  border: 2px solid #bbbbbb44;
+  box-shadow: 0 0 20px #bbbbbb44;
+
+  backdrop-filter: blur(3px) brightness(110%) contrast(80%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 50%;
+  height: 50%;
+}
+
+h1 {
+  font-size: 72px;
+  text-shadow: 0px 0px 10px black;
+}
+
+.buttonsContainer {
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+button {
+  border-radius: 12px;
+  padding: 12px;
+  transition-duration: 0.25s;
+  background-color: #62b3d3;
+}
+
+#create {
+    width: 100%;
+}
+
+button:hover {
+  background-color: #61b9db;
+  color: #264554;
+  box-shadow: 2px 2px 5px #264554;
+}
+
+input[type="text"] {
+  border-radius: 12px;
+  padding: 12px;
+  color: black;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* 
+CSS pulled from other project, adapt as needed 
+.sidebar ul li a {
+    border: outset 2px #264554;
+    color: #264554;
+    background-color: #72a4b9;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 0.8rem;
+    transition: all 0.2s ease;
+}
+
+.sidebar ul li a:hover {
+    background-color: #6d9aac;
+    color: #264554;
+    box-shadow: 2px 2px 5px #264554;
+}
+*/

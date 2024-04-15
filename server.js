@@ -10,6 +10,8 @@ const axios = require("axios");
 let app = express();
 require("express-ws")(app);
 
+app.use(express.static("public"));
+
 //const db = new sqlite3.Database(":memory:");
 
 const PORT = process.env.PORT || 8080;
@@ -150,19 +152,6 @@ app.get("/api/game/get", async function (req, res) {
   }
   res.status(200);
   res.send({ status: "ok", game: row });
-});
-
-app.use(function (req, res) {
-  if (fs.existsSync(process.cwd() + "/public" + req.path)) {
-    res.status(200);
-    res.sendFile(process.cwd() + "/public" + req.path);
-  } else if (fs.existsSync(process.cwd() + "/public" + req.path + ".html")) {
-    res.status(200);
-    res.sendFile(process.cwd() + "/public" + req.path + ".html");
-  } else {
-    res.status(404);
-    res.sendFile(process.cwd() + "/public/err.html");
-  }
 });
 
 app.listen(PORT, function () {

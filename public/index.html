@@ -1,42 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <title>Trivia Home</title>
-  </head>
-  <body>
-    <main>
-      <section>
-        <h1>Welcome to Triv!</h1>
-        <div class="buttonsContainer">
-          <button id="create" onclick="window.location.href = '/host'">
-            CREATE
-          </button>
-          <div class="joinButtonContainer">
-            <input id="gamecode" type="text" />
-            <button id="join">JOIN</button>
-          </div>
-        </div>
-      </section>
-    </main>
-    <script defer>
-      let gamecode = document.getElementById("gamecode");
-      document.getElementById("join").addEventListener("click", function () {
-        fetch("/api/game/get?code=" + gamecode.value)
-          .then(statusCheck)
-          .then((res) => res.json())
-          .then((res) => gameStart(res));
-
-        function statusCheck(res) {
-          return res;
-        }
-
-        function gameStart(res) {
-          window.location.href="/client?uuid="+res.game.uuid
-        }
-      });
-    </script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown trivia</title>
+</head>
+<body>
+    <a href="host.html">Create Game</a>
+    <a href="client.html">Join Game</a>
+</body>
 </html>
