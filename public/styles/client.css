@@ -110,3 +110,28 @@ main .question h1 {
         width: 90vw;
     }
 }
+
+footer {
+	margin: 4px 4px;
+	position: absolute;
+	bottom: 36px;
+	left: 50vw;
+	transform: translate(-50%, -50%);
+	width: auto;
+	height: 5vh;
+
+	box-shadow: 0 0 20px #bbbbbb44;
+	padding: 8px 16px;
+
+	border-radius: 4px;
+	backdrop-filter: blur(3px) brightness(70%) contrast(80%);
+	transition-duration: 0.5s;
+}
+
+footer.invisible {
+	color: #ffffff00;
+	box-shadow: 0 0 20px #bbbbbb00;
+	text-shadow: 0 0 10px #41414100;
+	backdrop-filter: blur(0) brightness(100%) contrast(100%);
+	border: 2px solid #bbbbbb00;
+}

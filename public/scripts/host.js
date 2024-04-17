@@ -234,6 +234,10 @@ async function changeBackgroundColor(color) {
 	await delay(3);
 }
 
+/**
+ * 
+ * @param {*} gameCode 
+ */
 function setGameCodeTextBoxes(gameCode) {
 	for (let codeBox of document.querySelectorAll('.code')) {
 		for (let i = codeBox.children.length - 1; i >= 0; i--) {
@@ -267,8 +271,18 @@ document.addEventListener('fullscreenchange', (event) => {
 	btn.append(newBtn);
 });
 
+const socket = io();
+socket.on('connect', function (e) {
+	showBannerMessage("Connection established!");
+})
+
+socket.on("created", setGameCodeTextBoxes);
+
+socket.on("showNextQuestion", function(question) {
+	promptQuestion(question.question, question.answers);
+});
 // Socket Stuff
-promptQuestion('Test question', ['Answer 1', 'Answer 2']);
+//promptQuestion('Test question', ['Answer 1', 'Answer 2']);
 //highlightAnswer(1);
 
 /*

@@ -42,20 +42,6 @@ function generateCode(length) {
 	return result;
 }
 
-ConnectionManager.create = function (socket) {
-	let code = generateCode(7);
-
-	rooms[code] = {
-		hostSocket: socket
-	};
-
-	socket.emit()
-
-	QuestionsManager.createQuestionBank(roomCode)
-		.then(() => { // Need this to be threaded?
-
-		});
-};
 
 ConnectionManager.join = async function (socket, roomCode) {
 	let room = rooms[roomCode];
@@ -66,7 +52,22 @@ ConnectionManager.join = async function (socket, roomCode) {
 };
 
 module.exports = function (io) {
-	io.on("connection", function(socket) {
-		console.log(socket.id);
+	io.on("connection", async function(socket) {
+		console.log("Socket "+socket.id+" has connected.");
+		let code = generateCode(7);
+		while (ConnectionManager.roomExists(code)) code = generateCode(7);
+ 
+		socket.join(code);
+		socket.emit("created",code);
+		let questions = await QuestionsManager.createQuestionBank(code);
+		io.to(code).emit("success",questions.length);
+
+		let question = QuestionsManager.nextQuestion(code);
+
+		io.to(code).emit("showNextQuestion", question)
+
+		socket.on('disconnect', function() {
+			console.log("Socket "+socket.id+" has disconnected.");
+		})
 	})
 };
