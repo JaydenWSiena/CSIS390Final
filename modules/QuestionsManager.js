@@ -28,7 +28,7 @@ const axios = require('axios');
 
 // Variables
 let rooms = [];
-let lastFetchTime;
+let lastFetchTime = Date.now();
 
 // Internal Functions
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -44,8 +44,9 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  */
 async function fetchQuestions(difficulty, numQuestions) {
 	// Wait to fetch questions if necessary
-	if (Date.now() - lastFetchTime < 5000) {
-		await delay(lastFetchTime + 5000 - Date.now());
+	if (Date.now() - lastFetchTime < 15000) {
+		console.log(lastFetchTime + 15000 - Date.now());
+		await delay(lastFetchTime + 15000 - Date.now());
 	}
 
 	lastFetchTime = Date.now();
@@ -58,12 +59,13 @@ async function fetchQuestions(difficulty, numQuestions) {
 			difficulty +
 			'&type=multiple',
 		responseType: 'json',
-	}).catch((err) => console.error(err)); // It will return null anyways
+	}).catch((err) => {});//console.error(err)); // It will return null anyways
 
 	// Handle the data and return it as a simple array of responses
-	if (!response.body) {
+	if (!response || !response.body) {
+		lastFetchTime = Date.now() + 30000;
 		// How do we Handle Error, here? Returning null will simply pass it along without adding any questions
-		return null;
+		return await fetchQuestions(difficulty, numQuestions);
 	} else {
 		// because when it is one question, the API will call it a result, not results
 		if (numQuestions > 1) {
@@ -95,13 +97,14 @@ function storeQuestions(roomCode) {
 	for (let i = 1; i < arguments.length; i++) {
 		if (arguments[i]) {// If there is a null argument, don't use it
 			for (let q of arguments[i]) {
-				rooms[roomCode].questions.push({
-					difficulty: q.difficulty,
-					category: q.category,
-					question: q.question,
-					correctAnswer: q['correct_answer'],
-					incorrectAnswers: q['incorrect_answers'],
-				});
+				if (q)
+					rooms[roomCode].questions.push({
+						difficulty: q.difficulty,
+						category: q.category,
+						question: q.question,
+						correctAnswer: q['correct_answer'],
+						incorrectAnswers: q['incorrect_answers'],
+					});
 			}
 		}
 	}
@@ -111,14 +114,14 @@ function storeQuestions(roomCode) {
 QuestionsManager.createQuestionBank = async function (roomCode) {
 	rooms[roomCode] = {};
 
-	//let easyQuestions = await fetchQuestions('easy', 5);
-	//storeQuestions(roomCode, easyQuestions);
-	//let mediumQuestions = await fetchQuestions('medium', 5);
-	//storeQuestions(roomCode, mediumQuestions);
-	//let hardQuestions = await fetchQuestions('hard', 5);
-	//storeQuestions(roomCode, hardQuestions);
+	let easyQuestions = await fetchQuestions('easy', 5);
+	storeQuestions(roomCode, easyQuestions);
+	let mediumQuestions = await fetchQuestions('medium', 5);
+	storeQuestions(roomCode, mediumQuestions);
+	let hardQuestions = await fetchQuestions('hard', 5);
+	storeQuestions(roomCode, hardQuestions);
 
-	storeQuestions(roomCode, fetchQuestionsDifficulties());
+	//storeQuestions(roomCode, fetchQuestionsDifficulties());
 	rooms[roomCode].currentQuestion = 0;
 
 	return rooms[roomCode].questions;

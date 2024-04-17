@@ -6,7 +6,7 @@
  */
 
 // CONFIGURATION
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 3000;
 
 // CONSTANTS
 const express = require("express");
