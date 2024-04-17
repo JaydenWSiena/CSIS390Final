@@ -246,6 +246,10 @@ main .question h1 {
 	text-wrap: pretty;
 }
 
+#question-section {
+	transition-duration: 0.5s;
+}
+
 .answer-list {
 	font-size: 36px;
 
@@ -255,6 +259,9 @@ main .question h1 {
 	box-shadow: 0 0 20px #bbbbbb44;
 	border: 2px solid #bbbbbb44;
 	backdrop-filter: blur(3px) brightness(110%) contrast(80%);
+
+	position: relative;
+	transition-duration: 0.5s;
 }
 .answer-list ol {
 	counter-reset: list;

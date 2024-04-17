@@ -1,62 +1,113 @@
 const delay = (sec) =>
 	new Promise((resolve) => setTimeout(resolve, sec * 1000));
 
-let sectionInView = document.getElementById("waiting-section");
+let sectionInView = document.getElementById('waiting-section');
 
+// Functions
+
+/**
+ * Shows a message on a banner at the top of the screen
+ * @param {String} text
+ * @returns void
+ */
 async function showBannerMessage(text) {
-	let oldHeader = document.querySelector("header");
+	let oldHeader = document.querySelector('header');
 	if (oldHeader) oldHeader.remove();
 
-	let body = document.querySelector("body");
-	let header = document.createElement("header");
-	header.classList.add("invisible");
+	let body = document.querySelector('body');
+	let header = document.createElement('header');
+	header.classList.add('invisible');
 	header.append(document.createTextNode(text));
 	body.append(header);
 
 	await delay(0.5);
 	if (!header) return;
-	header.classList.remove("invisible");
+	header.classList.remove('invisible');
 
 	await delay(5.5);
 
 	if (!header) return;
-	header.classList.add("invisible");
+	header.classList.add('invisible');
 	await delay(0.5);
 
 	if (!header) return;
 	header.remove();
 }
 
-function promptQuestion(question, answers) {
-	let questionText = document.querySelector(".question > h1");
+/**
+ * Displays a question with answers
+ * @param {String} question
+ * @param {String[]} answers
+ */
+async function promptQuestion(question, answers, waitTime) {
+	let questionText = document.querySelector('.question > h1');
 	questionText.removeChild(questionText.childNodes[0]);
 	questionText.append(document.createTextNode(question));
 
-	let answerList = document.querySelector(".answer-list ol");
+
+	let answerList = document.querySelector('.answer-list ol');
 	for (let i = answerList.children.length - 1; i >= 0; i--) {
 		answerList.children[i].remove();
 	}
 
 	for (let answer of answers) {
-		let listElement = document.createElement("li");
+		let listElement = document.createElement('li');
 		listElement.append(document.createTextNode(answer));
+		listElement.style.opacity = '0';
 		answerList.append(listElement);
 	}
 
-	sectionInView = document.getElementById("question-section");
-	sectionInView.scrollIntoView();
-}
+	let answerListContainer = document.querySelector('.answer-list');
+	answerListContainer.style['top'] = '100vw';
 
-function highlightAnswer(answerNum) {
-	let answerList = document.querySelector(".answer-list ol");
-	let answerElement = answerList.children[answerNum];
-	if (answerElement) {
-		answerElement.classList.add("correct-answer");
+	let questionContainer = document.querySelector('.question')
+
+	sectionInView = document.getElementById('question-section');
+	sectionInView.scrollIntoView();
+
+	await delay(5);
+	answerListContainer.style['top'] = '0';
+	await delay(0.5);
+
+	for (let listItem of answerList.children) {
+		listItem.animate(
+			[
+				// keyframes
+				{
+					opacity: '0',
+				},
+				{
+					opacity: '100%',
+				},
+			],
+			{
+				duration: 1000,
+			}
+		);
+		await delay(1);
+		listItem.style.opacity = '100%';
 	}
 }
 
+/**
+ * Highlights the correct answer based on the id in the answer list
+ * @param {Number} answerNum 
+ */
+function highlightAnswer(answerNum) {
+	let answerList = document.querySelector('.answer-list ol');
+	let answerElement = answerList.children[answerNum];
+	if (answerElement) {
+		answerElement.classList.add('correct-answer');
+	}
+}
+
+/**
+ * Shows the leaderboard in the list of playerList 
+ * (with the first three having 1st, 2nd, and 3rd medals)
+ * @param {Object[]} playerList 
+ */
 async function showLeaderboard(playerList) {
-	let leaderboardElement = document.querySelector(".leaderboard ol");
+	let leaderboardElement = document.querySelector('.leaderboard ol');
 	for (let i = leaderboardElement.children.length - 1; i >= 0; i--) {
 		leaderboardElement.children[i].remove();
 	}
@@ -64,20 +115,20 @@ async function showLeaderboard(playerList) {
 	for (let i = 0; i < playerList.length; i++) {
 		let player = playerList[i];
 
-		let listElement = document.createElement("li");
-		let listDiv = document.createElement("div");
-		let playerNameElement = document.createElement("h2");
-		let scoreElement = document.createElement("h2");
+		let listElement = document.createElement('li');
+		let listDiv = document.createElement('div');
+		let playerNameElement = document.createElement('h2');
+		let scoreElement = document.createElement('h2');
 
 		if (i == 0)
 			// If first place
-			player.name = "🥇 " + player.name;
+			player.name = '🥇 ' + player.name;
 		if (i == 1)
 			// If second place
-			player.name = "🥈 " + player.name;
+			player.name = '🥈 ' + player.name;
 		if (i == 2)
 			// If third place
-			player.name = "🥉 " + player.name;
+			player.name = '🥉 ' + player.name;
 		playerNameElement.append(document.createTextNode(player.name));
 
 		scoreElement.append(document.createTextNode(player.score));
@@ -87,14 +138,12 @@ async function showLeaderboard(playerList) {
 		leaderboardElement.append(listElement);
 	}
 
-	sectionInView = document.getElementById("leaderboard-section");
+	sectionInView = document.getElementById('leaderboard-section');
 	sectionInView.scrollIntoView();
 	await delay(1);
 	$(leaderboardElement.parentElement).animate(
 		{
-			scrollTop: $(
-				leaderboardElement.children[0]
-			).offset().top,
+			scrollTop: $(leaderboardElement.children[0]).offset().top,
 		},
 		500
 	);
@@ -115,22 +164,27 @@ async function showLeaderboard(playerList) {
 	await delay(leaderboardElement.children.length / 2);
 }
 
+
 let playerCount = 0;
+/**
+ * Adds the name from playerName to the list on the waiting section
+ * @param {String} playerName 
+ */
 async function addPlayerToWaitingList(playerName) {
-	let playerList = document.querySelector(".player-list");
-	let playerElement = document.createElement("h2");
+	let playerList = document.querySelector('.player-list');
+	let playerElement = document.createElement('h2');
 	playerElement.append(document.createTextNode(playerName));
 	playerList.insertBefore(playerElement, playerList.firstChild);
 	playerElement.animate(
 		[
 			// keyframes
 			{
-				color: "#ffffff00",
-				transform: "scale(150%)",
+				color: '#ffffff00',
+				transform: 'scale(150%)',
 			},
 			{
-				transform: "scale(100%)",
-				color: "#ffffffff",
+				transform: 'scale(100%)',
+				color: '#ffffffff',
 			},
 		],
 		{
@@ -139,16 +193,21 @@ async function addPlayerToWaitingList(playerName) {
 	);
 
 	playerCount++;
-	if (playerCount == 1) 
-		document.title = playerCount + " Player - Countdown Trivia";
-	else
-		document.title = playerCount + " Players - Countdown Trivia";
+	if (playerCount == 1)
+		document.title = playerCount + ' Player - Countdown Trivia';
+	else document.title = playerCount + ' Players - Countdown Trivia';
 }
 
-window.addEventListener("resize", function () {
-	sectionInView.scrollIntoView({ behavior: "instant" });
+// Scroll to the section on any resizing of the window
+window.addEventListener('resize', function () {
+	sectionInView.scrollIntoView({ behavior: 'instant' });
 });
 
+/*
+
+	ALL THE FULLSCREEN BUTTON STUFF 
+
+*/
 function enterFullScreen(element) {
 	if (element.requestFullscreen) {
 		element.requestFullscreen();
@@ -171,12 +230,12 @@ function exitFullScreen() {
 }
 
 async function changeBackgroundColor(color) {
-	document.querySelector(".background-color").style["background"] = color;
+	document.querySelector('.background-color').style['background'] = color;
 	await delay(3);
 }
 
 function setGameCodeTextBoxes(gameCode) {
-	for (let codeBox of document.querySelectorAll(".code")) {
+	for (let codeBox of document.querySelectorAll('.code')) {
 		for (let i = codeBox.children.length - 1; i >= 0; i--) {
 			codeBox.children[i].remove();
 		}
@@ -184,31 +243,32 @@ function setGameCodeTextBoxes(gameCode) {
 	}
 }
 
-let body = document.querySelector("body");
-let btn = document.getElementById("fs");
+let body = document.querySelector('body');
+let btn = document.getElementById('fs');
 let isFs = false;
-btn.addEventListener("click", function () {
+btn.addEventListener('click', function () {
 	if (btn.firstChild) btn.firstChild.remove();
 	if (!isFs) enterFullScreen(body);
 	else exitFullScreen();
 });
 
-document.addEventListener("fullscreenchange", (event) => {
+document.addEventListener('fullscreenchange', (event) => {
 	if (btn.firstChild) btn.firstChild.remove();
-	let newBtn = document.createElement("i");
+	let newBtn = document.createElement('i');
 	if (document.fullscreenElement) {
 		isFs = true;
-		newBtn.classList.add("fa-solid");
-		newBtn.classList.add("fa-minimize");
+		newBtn.classList.add('fa-solid');
+		newBtn.classList.add('fa-minimize');
 	} else {
 		isFs = false;
-		newBtn.classList.add("fa-solid");
-		newBtn.classList.add("fa-maximize");
+		newBtn.classList.add('fa-solid');
+		newBtn.classList.add('fa-maximize');
 	}
 	btn.append(newBtn);
 });
 
-//promptQuestion("Test question", ["Answer 1", "Answer 2"]);
+// Socket Stuff
+promptQuestion('Test question', ['Answer 1', 'Answer 2']);
 //highlightAnswer(1);
 
 /*

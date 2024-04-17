@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 8000;
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+const ConnectionManager = require("./modules/ConnectionManager");
 
 //const axios = require("axios");
 
@@ -22,9 +23,11 @@ let io = new Server(httpServer, { /* options */ });
 
 app.use(express.static("public"));
 
-io.on("connection", (socket) => {
-  if (socket)
-});
+ConnectionManager(io);
+
+/*io.on("connection", (socket) => {
+  
+});*/
 
 httpServer.listen(PORT, function () {
   console.log("WEBAPP | Server is listening on PORT " + PORT);

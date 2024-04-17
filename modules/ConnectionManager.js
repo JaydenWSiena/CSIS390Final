@@ -65,4 +65,8 @@ ConnectionManager.join = async function (socket, roomCode) {
 	}
 };
 
-module.exports = ConnectionManager;
+module.exports = function (io) {
+	io.on("connection", function(socket) {
+		console.log(socket.id);
+	})
+};
