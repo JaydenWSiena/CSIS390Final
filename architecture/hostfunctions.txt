@@ -4,35 +4,46 @@
 skinparam ParticipantPadding 20
 skinparam BoxPadding 10
 
+' Define system components
 participant "Host" as Host 
 participant "Connection Manager\n[CM]" as CM 
 participant "Questions Manager\n[QM]" as QM
 
+' Host starts a game session by creating a room and emitting to Connection Manager
 Host -> CM : emit(Tcreate, ABC)
 activate CM
+
+' Connection Manager joins the created room and initializes question bank
 CM -> CM : join(ABC)
 CM -> QM : createQuestionBank(ABC)
 
+' Questions Manager fetches and stores questions
 activate QM
-QM -> QM : fetchQuestions(easy)
-QM -> QM : storeQuestions(ABC, [q,a])
+QM -> QM : fetchQuestions("easy")
+QM -> QM : storeQuestions(ABC, [questions, answers])
 QM -> CM : Success(ABC)
 deactivate QM
+
+' Connection Manager confirms room creation and number of questions to Host
 CM -> Host : Success(ABC, numOfQuestions: 10)
 
-alt#Gold #LightBlue ScoreUpdate 
+' Score Update logic 
+group#Gold #LightBlue "Score Update Process"
     CM -> CM : on(TscoreUpdate, ABC)
     CM -> Host : to(ABC).emit(TscoreUpdate, TScoreBoard)
 end
+
 deactivate CM
 
-alt#LightBlue #LightGreen "For new question:"
-' This is logic on how New Question is asked. 
-' Note how Host requests New Question, and the CM just emits this to the room
+' New Question logic with detailed comments and color enhancement
+group#Gold #LightGreen "New Question Process"
+    ' Host requests the next question for the game
     Host -> CM : emit(TshowNextQuestion, ABC)
+    ' Connection Manager fetches next question from Questions Manager
     CM -> QM : getNxtQuestion(ABC)
+    ' Questions Manager sends next question and answer to Connection Manager
     QM -> CM : TQuestionAnswer
-    CM -> Host : to(ABC).emit(TnewQuestion,TQuestionAnswer) 
+    ' Connection Manager emits new question to the Host
+    CM -> Host : to(ABC).emit(TnewQuestion, TQuestionAnswer) 
 end
-
 @enduml
