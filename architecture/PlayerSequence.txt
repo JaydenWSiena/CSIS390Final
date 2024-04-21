@@ -5,28 +5,32 @@ title Player Sequence Diagram
 skinparam ParticipantPadding 20
 skinparam BoxPadding 10
 
+' Define participants with clear roles and separation
 participant "Player" as Player 
 participant "Connection Manager\n[CM]" as CM 
 participant "Score Manager\n[SM]" as SM
 
+' Player requests to join via the Connection Manager
 Player -> CM : join(ABC)
+' Connection Manager processes the join request internally
 CM -> CM : join("ABC") [join room ABC]
 
-alt#Gold #LightGreen UpdateScore
-  SM -> Player : to(ABC).emit(TscoreUpdate, TscoreBoard)
-end
-
-alt#Gold #LightBlue NewQuestion
+' Handling new questions in the game
+group #LightBlue New Question Phase
   CM -> Player : to(ABC).emit(TnewQuestion, TquestionAnswer)
   Player -> Player : Display TquestionAnswer
   Player -> CM : emit(TnewAnswer, TquestionAnswer)
   CM -> CM : Check Answer
-  CM -> SM : IncrementScore(ABC, player.id)
-alt#Gold #LightGreen UpdateScore
+  ' Check if the answer is correct
+  alt #LightYellow Answer is Correct 
+    CM -> SM : IncrementScore(ABC, player.id)
+  else Answer is Incorrect #LightCoral
+    CM -> Player : Notify Incorrect Answer
+  end
+end
+
+' Update score if needed
+group #LightGreen Score Update Phase
   SM -> Player : to(ABC).emit(TscoreUpdate, TscoreBoard)
 end
-end
-
-
-
 @enduml
