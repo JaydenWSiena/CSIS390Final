@@ -78,6 +78,18 @@ async function fetchQuestions(difficulty, numQuestions) {
 	}
 }
 
+async function fetchQuestionsAPIv2() {
+	let URL = "https://the-trivia-api.com/v2/questions";
+	let response = await axios(URL)
+		.catch((err) => {});
+
+	if (!response) {
+		await delay(5000);
+		return await fetchQuestionsAPIv2();
+	} else	
+		return response.data;
+}
+
 function fetchQuestionsDifficulties(difficulties, numQuestions) {
 	return [{
 		difficulty: 'easy',
@@ -97,14 +109,15 @@ function storeQuestions(roomCode) {
 	for (let i = 1; i < arguments.length; i++) {
 		if (arguments[i]) {// If there is a null argument, don't use it
 			for (let q of arguments[i]) {
-				if (q)
+				if (q) {
 					rooms[roomCode].questions.push({
 						difficulty: q.difficulty,
 						category: q.category,
-						question: q.question,
-						correctAnswer: q['correct_answer'],
-						incorrectAnswers: q['incorrect_answers'],
+						question: q.question.text,
+						correctAnswer: q.correctAnswer,
+						incorrectAnswers: q.incorrectAnswers,
 					});
+				}
 			}
 		}
 	}
@@ -114,12 +127,16 @@ function storeQuestions(roomCode) {
 QuestionsManager.createQuestionBank = async function (roomCode) {
 	rooms[roomCode] = {};
 
+	/*
 	let easyQuestions = await fetchQuestions('easy', 5);
 	storeQuestions(roomCode, easyQuestions);
 	let mediumQuestions = await fetchQuestions('medium', 5);
 	storeQuestions(roomCode, mediumQuestions);
 	let hardQuestions = await fetchQuestions('hard', 5);
 	storeQuestions(roomCode, hardQuestions);
+	*/
+
+	storeQuestions(roomCode, await fetchQuestionsAPIv2());
 
 	//storeQuestions(roomCode, fetchQuestionsDifficulties());
 	rooms[roomCode].currentQuestion = 0;
@@ -131,13 +148,35 @@ QuestionsManager.nextQuestion = function (roomCode) {
 	let question = rooms[roomCode].questions[rooms[roomCode].currentQuestion];
 	rooms[roomCode].currentQuestion++;
 
-	let qStatement = question.question;
 	let answers = question.incorrectAnswers;
 	answers.push(question.correctAnswer);
 
 	shuffle(answers);
 
-	return {question: qStatement, answers: answers};
+	function sentenceCase(str) {
+		if ((str === null) || (str === ''))
+			return false;
+		else
+			str = str.toString();
+	 
+		return str.replace(/\w\S*/g,
+			function (txt) {
+				return txt.charAt(0).toUpperCase() +
+					txt.substr(1).toLowerCase();
+			});
+	}
+	return {category: sentenceCase(question.category.replaceAll("_"," ")), question: question.question, answers: answers};
 };
+
+QuestionsManager.hasNextQuestion = function(roomCode) {
+	return rooms[roomCode].currentQuestion < rooms[roomCode].questions.length;
+}
+
+QuestionsManager.getQuestion = function(roomCode) {
+	let cqIndex = rooms[roomCode].currentQuestion;
+	if (cqIndex > 0)
+		return rooms[roomCode].questions[rooms[roomCode].currentQuestion - 1];
+	return null;
+}
 
 module.exports = QuestionsManager;

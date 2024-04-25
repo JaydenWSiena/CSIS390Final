@@ -3,6 +3,11 @@ const delay = (sec) =>
 
 let sectionInView = document.getElementById('waiting-section');
 
+let startButton = document.getElementById("startButton");
+startButton.style.visibility = "hidden";
+
+let questionCountdown;
+
 // Functions
 
 /**
@@ -39,10 +44,20 @@ async function showBannerMessage(text) {
  * @param {String} question
  * @param {String[]} answers
  */
-async function promptQuestion(question, answers, waitTime) {
+async function promptQuestion(category, question, answers, waitTime) {
+	let startButton = document.getElementById("startButton");
+	startButton.removeChild(startButton.firstChild);
+	startButton.append(document.createTextNode("SKIP"));
+	startButton.onclick = function() {
+		socket.emit("skipQuestion");
+	};
+
 	let questionText = document.querySelector('.question > h1');
 	questionText.removeChild(questionText.childNodes[0]);
 	questionText.append(document.createTextNode(question));
+	let categoryText = document.querySelector('.question > h2');
+	categoryText.removeChild(categoryText.childNodes[0]);
+	categoryText.append(document.createTextNode(category));
 
 
 	let answerList = document.querySelector('.answer-list ol');
@@ -87,6 +102,10 @@ async function promptQuestion(question, answers, waitTime) {
 		await delay(1);
 		listItem.style.opacity = '100%';
 	}
+
+	questionCountdown = setInterval(() => {
+		
+	}, 1000)
 }
 
 /**
@@ -274,13 +293,29 @@ document.addEventListener('fullscreenchange', (event) => {
 const socket = io();
 socket.on('connect', function (e) {
 	showBannerMessage("Connection established!");
+	socket.emit('newGame');
 })
+
+
 
 socket.on("created", setGameCodeTextBoxes);
 
+socket.on("questionsReady", function() {
+	let startButton = document.getElementById("startButton");
+	startButton.append(document.createTextNode("START"));
+	startButton.onclick = function() {
+		socket.emit('startGame');
+	};
+
+	startButton.style.visibility = "visible";
+})
+
 socket.on("showNextQuestion", function(question) {
-	promptQuestion(question.question, question.answers);
+	console.log(question);
+	promptQuestion(question.category, question.question, question.answers);
 });
+
+socket.on('message', showBannerMessage);
 // Socket Stuff
 //promptQuestion('Test question', ['Answer 1', 'Answer 2']);
 //highlightAnswer(1);

@@ -1,3 +1,8 @@
+const delay = (sec) =>
+	new Promise((resolve) => setTimeout(resolve, sec * 1000));
+
+let sectionInView = document.getElementById('name-section');
+
 /**
  * Shows a message on a banner at the top of the screen
  * @param {String} text
@@ -19,21 +24,23 @@ async function showBannerMessage(text) {
 
 	await delay(5.5);
 
-	if (!header) return;
+	if (!footer) return;
 	footer.classList.add('invisible');
 	await delay(0.5);
 
-	if (!header) return;
+	if (!footer) return;
 	footer.remove();
 }
 
 function getRoomCodeFromURL() {
 	const urlParams = new URLSearchParams(window.location.search);
-	return urlParams.get('code');
+	console.log(urlParams.get("code"));
+	return urlParams.get("code");
 }
 
 function displayQuestion(question) {
 	let headText = document.querySelector('#question-section h1');
+	headText.removeChild(headText.childNodes[0]);
 	headText.append(document.createTextNode(question.question));
 
 	for (let answerBtn of document.querySelectorAll('.answer-button')) {
@@ -49,12 +56,24 @@ function displayQuestion(question) {
 			let answer = this.getAttribute('data-answerText');
 			socket.emit('answer', answer);
 		};
+		document.getElementById("question-section").append(answerButton);
 	}
+}
+
+function joinRoom() {
+	socket.emit('joinRoom', roomCode, displayName);
 }
 
 const socket = io();
 const roomCode = getRoomCodeFromURL();
-socket.emit('join-room', roomCode);
+
+if (roomCode == null) {
+	sectionInView = document.getElementById('code-section');
+}
+
+
+
 socket.on('showNextQuestion', function (question) {
 	displayQuestion(question);
 });
+socket.on('message', showBannerMessage);

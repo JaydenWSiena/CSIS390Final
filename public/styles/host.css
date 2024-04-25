@@ -227,8 +227,17 @@ main * {
 	font-size: 64px;
 }
 
+.countdown {
+	position: fixed;
+	top: 24px;
+	left: auto;
+	right: auto;
+	width: 95%;
+	height: 5%;
+}
+
 main .question h2 {
-	width: auto;
+	width: 50vw;
 	box-shadow: 0 0 20px #bbbbbb44;
 	border: 2px solid #bbbbbb44;
 	backdrop-filter: blur(3px) brightness(110%) contrast(80%);
@@ -241,6 +250,7 @@ main .question h2 {
 }
 
 main .question h1 {
+	width: 50vw;
 	font-size: 64px;
 	text-align: end;
 	text-wrap: pretty;
@@ -251,6 +261,7 @@ main .question h1 {
 }
 
 .answer-list {
+	width: 50vw;
 	font-size: 36px;
 
 	border-radius: 4px;
@@ -429,4 +440,22 @@ footer h3 {
 
 	font-weight: normal;
 	font-family: "PlayerOne", Manrope, Manrope-Fallback, Arial, sans-serif;
+}
+
+footer button {
+	background-color: black;
+	color: white;
+	height: 80%;
+	box-shadow: 0 0 10px black;
+
+	font-size: 32px;
+	font-family: "PlayerOne", Manrope, Manrope-Fallback, Arial, sans-serif;
+	border:none;
+	padding: 8px;
+	transition-duration: 0.2s;
+}
+
+footer button:hover {
+	background-color: white;
+	color: black;
 }

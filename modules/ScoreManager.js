@@ -9,6 +9,20 @@
 
 let ScoreManager = {};
 
-ScoreManager.incrementScore = function (roomCode, playerId) {};
+let rooms = {};
+
+ScoreManager.new = function(roomCode) {
+    rooms[roomCode] = {
+        players: {}
+    };
+};
+
+ScoreManager.registerPlayer = function(roomCode, displayName) {
+
+};
+
+ScoreManager.incrementScore = function (roomCode, playerId) {
+    rooms[roomCode]
+};
 
 module.exports = ScoreManager;
