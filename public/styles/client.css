@@ -15,6 +15,46 @@ header {
 	justify-content: space-between;
 }
 
+#code-section {
+	justify-content: flex-start;
+}
+
+#code-section button {
+	background-color: black;
+	color: white;
+	height: 5%;
+	box-shadow: 0 0 10px black;
+
+	font-size: 32px;
+	font-family: "PlayerOne", Manrope, Manrope-Fallback, Arial, sans-serif;
+	border:none;
+	padding: 8px;
+	transition-duration: 0.2s;
+}
+
+#name-section,#code-section {
+	flex-direction: column;
+}
+
+input[type=text] {
+	margin: 2px 2px;
+
+	padding: 4px 4px;
+	width: 30%;
+	height: 42px;
+	font-size: 32px;
+	text-align: center;
+	border: 0;
+
+	box-shadow: 0 0 10px black;
+
+	background-color: white;
+	color: black;
+
+	font-weight: normal;
+	font-family: "PlayerOne", Manrope, Manrope-Fallback, Arial, sans-serif;
+}
+
 .name {
 	margin: 2px 2px;
 
@@ -107,6 +147,9 @@ main .question h1 {
 
 @media (max-width: 680px) {
     .answer-button {
+        width: 90vw;
+    }
+    input[type=text] {
         width: 90vw;
     }
 }
