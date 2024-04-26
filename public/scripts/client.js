@@ -3,6 +3,11 @@ const delay = (sec) =>
 
 let sectionInView = document.getElementById('name-section');
 
+// Scroll to the section on any resizing of the window
+window.addEventListener('resize', function () {
+	sectionInView.scrollIntoView({ behavior: 'instant' });
+});
+
 /**
  * Shows a message on a banner at the top of the screen
  * @param {String} text
@@ -69,6 +74,7 @@ const roomCode = getRoomCodeFromURL();
 
 if (roomCode == null) {
 	sectionInView = document.getElementById('code-section');
+	sectionInView.scrollIntoView({ behavior: 'instant' });
 }
 
 

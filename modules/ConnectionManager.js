@@ -81,14 +81,18 @@ ConnectionManager.nextQuestion = async function(code) {
 		io.to(code).emit("showLeaderboard", ScoreManager.getLeaderboard())
 	}
 	io.to(code).emit("showNextQuestion", question, QuestionsManager.hasNextQuestion(code));
-	console.dir(question);
+	rooms[code].currentQuestion = question;
 };
 
 ConnectionManager.join = async function (socket, roomCode, displayName) {
 	socket.join(roomCode);
 	socket.emit("message","Successfully joined room!");
 	rooms[roomCode].playerCount++;
-	ScoreManager.registerPlayer(roomCode, displayName)
+	ScoreManager.registerPlayer(roomCode, socket.id, displayName)
+	socket.on("answer", function(answer) {
+		if (QuestionsManager.isCorrectAnswer(roomCode, answer))
+			socket.emit("updateScore", ScoreManager.incrementScore(socket.id));
+	});
 };
 
 module.exports = function (io) {
@@ -109,8 +113,16 @@ module.exports = function (io) {
 			})
 
 			socket.on("nextQuestion", async function() { //  Creating a new game
-				console.log("Socket "+socket.id+" has started a game.");
+				console.log("Socket "+socket.id+" has asked for the next question.");
 				ConnectionManager.nextQuestion(code);
+			})
+
+			
+			socket.on("showAnswer", async function(answers) { //  Creating a new game
+				console.log("Socket "+socket.id+" has asked to show an answer.");
+				io.to(code).emit("highlightAnswer", QuestionsManager.getAnswer(code, answers));
+				await delay(5000);
+				io.to(code).emit("showLeaderboard", ScoreManager.getLeaderboard(code));
 			})
 		})
 	

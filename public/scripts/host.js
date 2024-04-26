@@ -7,6 +7,8 @@ let startButton = document.getElementById("startButton");
 startButton.style.visibility = "hidden";
 
 let questionCountdown;
+let cd = document.querySelector(".progress");
+cd.style.opacity = "0%";
 
 // Functions
 
@@ -44,7 +46,7 @@ async function showBannerMessage(text) {
  * @param {String} question
  * @param {String[]} answers
  */
-async function promptQuestion(category, question, answers, waitTime) {
+async function promptQuestion(category, question, answers) {
 	let startButton = document.getElementById("startButton");
 	startButton.removeChild(startButton.firstChild);
 	startButton.append(document.createTextNode("SKIP"));
@@ -103,9 +105,35 @@ async function promptQuestion(category, question, answers, waitTime) {
 		listItem.style.opacity = '100%';
 	}
 
+	let startAt = 100;
+
+	function setProgressBar(num) {
+		cd.setAttribute("aria-valuenow", num)
+		cd.children[0].style.width = num+"%";
+	}
+
+	setProgressBar(100);
+
+	cd.style.opacity = "100%";
+
 	questionCountdown = setInterval(() => {
-		
-	}, 1000)
+		startAt -= 1;
+		if (startAt < 0) {
+			clearInterval(questionCountdown)
+		} else {
+			setProgressBar(startAt);
+		}
+	}, 200)
+	await delay(20);
+	
+	cd.style.opacity = "0";
+	socket.emit('showAnswer', answers);
+}
+
+function skipQuestion() {
+	cd.style.opacity = "0";
+	clearInterval(questionCountdown);
+	socket.emit('showAnswer', answers);
 }
 
 /**
@@ -291,6 +319,7 @@ document.addEventListener('fullscreenchange', (event) => {
 });
 
 const socket = io();
+let roomCode;
 socket.on('connect', function (e) {
 	showBannerMessage("Connection established!");
 	socket.emit('newGame');
@@ -298,7 +327,14 @@ socket.on('connect', function (e) {
 
 
 
-socket.on("created", setGameCodeTextBoxes);
+socket.on("created", (code) => {
+	if (roomCode == null) {
+		setGameCodeTextBoxes(code);
+		roomCode = code;
+	} else {
+		window.location.reload();
+	}
+});
 
 socket.on("questionsReady", function() {
 	let startButton = document.getElementById("startButton");
@@ -313,9 +349,14 @@ socket.on("questionsReady", function() {
 socket.on("showNextQuestion", function(question) {
 	console.log(question);
 	promptQuestion(question.category, question.question, question.answers);
+	setTimeout(() => {}, 10000);
 });
 
+socket.on("highlightAnswer", highlightAnswer);
+
 socket.on('message', showBannerMessage);
+
+socket.on('showLeaderboard', showLeaderboard);
 // Socket Stuff
 //promptQuestion('Test question', ['Answer 1', 'Answer 2']);
 //highlightAnswer(1);

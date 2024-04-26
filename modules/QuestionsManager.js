@@ -179,4 +179,23 @@ QuestionsManager.getQuestion = function(roomCode) {
 	return null;
 }
 
+QuestionsManager.getAnswer = function(roomCode, answers) {
+	let cqIndex = rooms[roomCode].currentQuestion;
+	if (cqIndex > 0) {
+		let question = rooms[roomCode].questions[rooms[roomCode].currentQuestion - 1];
+		for (let i=0; i < 4; i++) {
+			if (answers[i] == question.correctAnswer)
+				return i;
+		}
+	}
+	return -1;
+}
+
+QuestionsManager.isCorrectAnswer = function(roomCode, answer) {
+	let cqIndex = rooms[roomCode].currentQuestion;
+	if (cqIndex > 0)
+		return rooms[roomCode].questions[rooms[roomCode].currentQuestion - 1].correctAnswer == answer;
+	return null;
+}
+
 module.exports = QuestionsManager;
