@@ -60,7 +60,10 @@ function displayQuestion(question) {
 	}
 }
 
+document.getElementById('joinRoom').onclick = joinRoom;
 function joinRoom() {
+	const roomCode = document.getElementById('code').value;
+	const displayName = document.getElementById('name').value;
 	socket.emit('joinRoom', roomCode, displayName);
 }
 
@@ -74,6 +77,7 @@ if (roomCode == null) {
 
 
 socket.on('showNextQuestion', function (question) {
+	console.log("showNextQuestion", question);
 	displayQuestion(question);
 });
 socket.on('message', showBannerMessage);
