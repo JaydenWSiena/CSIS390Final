@@ -19,13 +19,14 @@ ScoreManager.new = function(roomCode) {
 
 ScoreManager.registerPlayer = function(roomCode, id, displayName) {
     rooms[roomCode].players[id] = {
-        displayName,
+        displayName: displayName,
         score: 0
     };
 };
 
 ScoreManager.incrementScore = function (roomCode, id) {
-    rooms[roomCode].players[id].score += 100;
+    if (rooms[roomCode])
+        rooms[roomCode].players[id].score += 100;
 };
 
 /*
@@ -51,5 +52,10 @@ ScoreManager.getLeaderboard = function (roomCode) {
     }
     return result;
 };
+
+ScoreManager.removePlayer = function(code, id) {
+    if (rooms[code])
+        delete rooms[code].players[id];
+}
 
 module.exports = ScoreManager;

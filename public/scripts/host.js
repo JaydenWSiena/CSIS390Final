@@ -42,17 +42,19 @@ async function showBannerMessage(text) {
 	header.remove();
 }
 
+let currentAnswers;
 /**
  * Displays a question with answers
  * @param {String} question
  * @param {String[]} answers
  */
 async function promptQuestion(category, question, answers) {
+	currentAnswers = answers;
 	let startButton = document.getElementById("startButton");
 	startButton.removeChild(startButton.firstChild);
-	startButton.append(document.createTextNode("SKIP"));
+	startButton.append(document.createTextNode("NEXT"));
 	startButton.onclick = function() {
-		socket.emit("skipQuestion");
+		skipQuestion()
 	};
 
 	let questionText = document.querySelector('.question > h1');
@@ -121,20 +123,22 @@ async function promptQuestion(category, question, answers) {
 		startAt -= 1;
 		if (startAt < 0) {
 			clearInterval(questionCountdown)
+			cd.style.opacity = "0";
+			socket.emit('showAnswer', answers);
 		} else {
 			setProgressBar(startAt);
 		}
 	}, 200)
-	await delay(20);
-	
-	cd.style.opacity = "0";
-	socket.emit('showAnswer', answers);
 }
 
 function skipQuestion() {
-	cd.style.opacity = "0";
-	clearInterval(questionCountdown);
-	socket.emit('showAnswer', answers);
+	if (sectionInView.id == "question-section"){
+		cd.style.opacity = "0";
+		clearInterval(questionCountdown);
+		socket.emit('showAnswer', currentAnswers);
+	} else {
+		socket.emit('nextQuestion');
+	}
 }
 
 /**
@@ -266,6 +270,7 @@ function enterFullScreen(element) {
 	} else if (element.msRequestFullscreen) {
 		element.msRequestFullscreen(); // IE/Edge
 	}
+	sectionInView.scrollIntoView({ behavior: 'instant' });
 }
 function exitFullScreen() {
 	if (document.exitFullscreen) {
@@ -275,6 +280,7 @@ function exitFullScreen() {
 	} else if (document.webkitExitFullscreen) {
 		document.webkitExitFullscreen();
 	}
+	sectionInView.scrollIntoView({ behavior: 'instant' });
 }
 
 async function changeBackgroundColor(color) {
@@ -358,6 +364,10 @@ socket.on("highlightAnswer", highlightAnswer);
 socket.on('message', showBannerMessage);
 
 socket.on('showLeaderboard', showLeaderboard);
+
+socket.on('newPlayer', addPlayerToWaitingList);
+
+socket.on('done', () => {window.location.reload()});
 // Socket Stuff
 //promptQuestion('Test question', ['Answer 1', 'Answer 2']);
 //highlightAnswer(1);

@@ -15,11 +15,12 @@ header {
 	justify-content: space-between;
 }
 
-#code-section {
+#code-section,#name-section {
 	justify-content: flex-start;
+	flex-direction: column;
 }
 
-#code-section button {
+#code-section button,#name-section button {
 	background-color: black;
 	color: white;
 	height: 5%;
@@ -32,8 +33,9 @@ header {
 	transition-duration: 0.2s;
 }
 
-#name-section,#code-section {
-	flex-direction: column;
+#code-section button:hover,#name-section button:hover {
+	background-color: white;
+	color: black;
 }
 
 input[type=text] {

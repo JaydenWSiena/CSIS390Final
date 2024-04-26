@@ -74,26 +74,40 @@ ConnectionManager.start = async function(code) {
 	ConnectionManager.nextQuestion(code);
 }
 
+ConnectionManager.removePlayer = function(code, id) {
+	if (rooms[code])
+		rooms[code].playerCount--;
+	ScoreManager.removePlayer(code, id);
+}
+
 ConnectionManager.nextQuestion = async function(code) {
 	let io = ConnectionManager.IO;
 	let question = QuestionsManager.nextQuestion(code);
 	if (!question) {
-		io.to(code).emit("showLeaderboard", ScoreManager.getLeaderboard())
+		io.to(code).emit("showLeaderboard", ScoreManager.getLeaderboard());
+		io.to(code).emit("done");
+	} else {
+		io.to(code).emit("showNextQuestion", question, QuestionsManager.hasNextQuestion(code));
+		rooms[code].currentQuestion = question;
 	}
-	io.to(code).emit("showNextQuestion", question, QuestionsManager.hasNextQuestion(code));
-	rooms[code].currentQuestion = question;
 };
 
 ConnectionManager.join = async function (socket, roomCode, displayName) {
+	let io = ConnectionManager.IO;
 	socket.join(roomCode);
 	socket.emit("message","Successfully joined room!");
 	rooms[roomCode].playerCount++;
 	ScoreManager.registerPlayer(roomCode, socket.id, displayName)
 	socket.on("answer", function(answer) {
 		if (QuestionsManager.isCorrectAnswer(roomCode, answer))
-			socket.emit("updateScore", ScoreManager.incrementScore(socket.id));
+			socket.emit("updateScore", ScoreManager.incrementScore(roomCode, socket.id));
 	});
+	io.to(roomCode).emit("newPlayer", displayName);
 };
+
+ConnectionManager.destroyGame = function(code) {
+	delete rooms[code];
+}
 
 module.exports = function (io) {
 	ConnectionManager.IO = io;
@@ -124,6 +138,10 @@ module.exports = function (io) {
 				await delay(5000);
 				io.to(code).emit("showLeaderboard", ScoreManager.getLeaderboard(code));
 			})
+			
+			socket.on('disconnect', function() {
+				ConnectionManager.destroyGame(code);
+			});
 		})
 	
 		socket.on('joinRoom', function(roomCode, displayName) {
@@ -135,12 +153,13 @@ module.exports = function (io) {
 				let cq = QuestionsManager.getQuestion(roomCode);
 				if (cq)
 					socket.emit("showNextQuestion", cq);
-
+				
 				socket.on('disconnect', function() {
-					ConnectionManager.destroyGame(code);
+					ConnectionManager.removePlayer(roomCode, socket.id);
 				});
 			} else {
 				socket.emit("message","Room with code "+roomCode+" does not exist!");
+				socket.emit("invalidRoom");
 			}
 		});
 
