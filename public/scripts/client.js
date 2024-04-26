@@ -2,6 +2,12 @@ const delay = (sec) =>
 	new Promise((resolve) => setTimeout(resolve, sec * 1000));
 
 let sectionInView = document.getElementById('name-section');
+sectionInView.scrollIntoView({ behavior: 'instant' });
+
+// Scroll to the section on any resizing of the window
+window.addEventListener('resize', function () {
+	sectionInView.scrollIntoView({ behavior: 'instant' });
+});
 
 // Scroll to the section on any resizing of the window
 window.addEventListener('resize', function () {

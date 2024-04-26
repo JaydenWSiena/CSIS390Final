@@ -2,6 +2,7 @@ const delay = (sec) =>
 	new Promise((resolve) => setTimeout(resolve, sec * 1000));
 
 let sectionInView = document.getElementById('waiting-section');
+sectionInView.scrollIntoView({ behavior: 'instant' });
 
 let startButton = document.getElementById("startButton");
 startButton.style.visibility = "hidden";
